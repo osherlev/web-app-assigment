@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon --env-file=.env app.js",
-    "start": "node --env-file=.env app.js"
+    "start": "node --env-file=.env app.js",
+    "test": "jest --coverage --detectOpenHandles --forceExit"
   },
   "author": "Osher Levi and Alik Kholodenko",
   "license": "ISC",
@@ -14,7 +15,9 @@
     "body-parser": "^1.20.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.1",
-    "mongoose": "^8.8.0"
+    "jest": "^29.7.0",
+    "mongoose": "^8.8.0",
+    "supertest": "^7.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
