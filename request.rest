@@ -1,0 +1,35 @@
+# ---------------------------------
+# Posts API
+# ---------------------------------
+
+# 1. Create a New Post
+POST http://localhost:3000/post/createPost
+Content-Type: application/json
+
+{
+  "title": "My First Post",
+  "content": "This is the content of my first post.",
+  "sender": "Osher"
+}
+
+###
+# 2. Get All Posts
+GET http://localhost:3000/post/getAllPosts
+
+###
+# 3. Get a Post by ID
+GET http://localhost:3000/post/675857f5f0dd49af4d25bbc6
+
+###
+# 4. Get Posts by Sender
+GET http://localhost:3000/post?sender=Osher
+
+###
+# 5. Update a Post
+PUT http://localhost:3000/post/675857f5f0dd49af4d25bbc6
+Content-Type: application/json
+
+{
+  "title": "Updated Post Title",
+  "content": "Updated content for the post."
+}
