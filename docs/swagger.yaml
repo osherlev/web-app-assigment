@@ -1,14 +1,16 @@
 openapi: 3.0.0
 info:
-  title: Assigment
+  title: Assignment
   description: "API documentation for Users, Posts, and Comments."
   version: 1.0.0
 servers:
   - url: http://localhost:3000
     description: Local development server
 paths:
-  /post/getAllPosts:
+  /getAllPosts:
     get:
+      tags:
+        - Post
       summary: Get all posts
       description: Retrieve a list of all posts.
       responses:
@@ -22,6 +24,8 @@ paths:
                   $ref: "#/components/schemas/Post"
   /post/createPost:
     post:
+      tags:
+        - Post
       summary: Add a new post
       description: Create a new post in the database.
       requestBody:
@@ -40,6 +44,8 @@ paths:
                 $ref: "#/components/schemas/Post"
   /post/{postId}:
     get:
+      tags:
+        - Post
       summary: Get a post by ID
       description: Retrieve a single post by its unique ID.
       parameters:
@@ -65,6 +71,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/UnexpectedError"
     put:
+      tags:
+        - Post
       summary: Update a post
       description: Update the content of an existing post.
       parameters:
@@ -94,8 +102,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnexpectedError"
-  /:
+  /post/bySender/{senderId}:
     get:
+      tags:
+        - Post
       summary: Get posts by sender
       description: Retrieve all posts made by a specific sender.
       parameters:
@@ -115,7 +125,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/Post"
         "404":
-          description: No posts found for this sender
+          description: No posts found for this sender.
         "500":
           description: An unexpected error occurred
           content:
@@ -125,6 +135,8 @@ paths:
 
   /comment/createComment:
     post:
+      tags:
+        - Comment
       summary: Add a new comment
       description: Create a new comment for a specific post.
       requestBody:
@@ -141,8 +153,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Comment"
+
   /comment/byId/{commentId}:
     get:
+      tags:
+        - Comment
       summary: Get a comment by ID
       description: Retrieve a single comment by its unique ID.
       parameters:
@@ -161,82 +176,65 @@ paths:
                 $ref: "#/components/schemas/Comment"
         "404":
           description: Comment not found.
+
   /comment/bySender:
     get:
+      tags:
+        - Comment
       summary: Get comments by sender
       description: Retrieve comments made by a specific sender.
       parameters:
         - name: senderId
           in: query
           required: true
-          description: ID of the sender to retrieve comments for
+          description: ID of the sender to retrieve comments for.
           schema:
             type: string
       responses:
-        '200':
-          description: List of comments successfully retrieved
+        "200":
+          description: List of comments successfully retrieved.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                      example: "xyz789"
-                    postId:
-                      type: string
-                      example: "abc123"
-                    content:
-                      type: string
-                      example: "This is a comment."
-                    senderId:
-                      type: string
-                      example: "12345"
-        '404':
-          description: No comments found for the sender
-        '500':
-          description: Internal server error
-  /comment/post/{post_id}:
+                  $ref: "#/components/schemas/Comment"
+        "404":
+          description: No comments found for the sender.
+        "500":
+          description: Internal server error.
+
+  /comment/post/{postId}:
     get:
+      tags:
+        - Comment
       summary: Get comments by post ID
       description: Retrieve all comments for a specific post.
       parameters:
-        - name: post_id
+        - name: postId
           in: path
           required: true
-          description: ID of the post to retrieve comments for
+          description: ID of the post to retrieve comments for.
           schema:
             type: string
       responses:
-        '200':
-          description: List of comments for the specified post
+        "200":
+          description: List of comments for the specified post.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                      example: "xyz789"
-                    postId:
-                      type: string
-                      example: "abc123"
-                    content:
-                      type: string
-                      example: "This is a comment."
-                    senderId:
-                      type: string
-                      example: "12345"
-        '404':
-          description: No comments found for the post
-        '500':
-          description: Internal server error
+                  $ref: "#/components/schemas/Comment"
+        "404":
+          description: No comments found for the post.
+        "500":
+          description: Internal server error.
+
   /comment/update/{commentId}:
     put:
+      tags:
+        - Comment
       summary: Update a comment
       description: Update the content of an existing comment.
       parameters:
@@ -260,8 +258,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Comment"
-  /comment/delete/{id}:
+
+  /comment/delete/{commentId}:
     delete:
+      tags:
+        - Comment
       summary: Delete a comment
       description: Delete a comment by its unique ID.
       parameters:
@@ -275,21 +276,21 @@ paths:
         "204":
           description: Comment successfully deleted.
 
-
-  /user:
+  /users:
     get:
       tags:
         - User
       summary: Get all users
-      description: Get all users from the database
-      operationId: getAllUsers
+      description: Get all users from the database.
       responses:
         "200":
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
         "500":
           description: An unexpected error occurred
           content:
@@ -300,15 +301,14 @@ paths:
       tags:
         - User
       summary: Register new user
-      description: Register new user
-      operationId: register
+      description: Register a new user.
       requestBody:
-        description: Register new user
+        description: User registration data.
+        required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/UserInput"
-        required: true
       responses:
         "200":
           description: Successful operation
@@ -328,25 +328,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnexpectedError"
+
   /user/email/{email}:
     get:
       tags:
         - User
-      summary: Get User by Email
-      description: Returns a single user
-      operationId: getUserByEmail
+      summary: Get user by email
+      description: Retrieve a user by their email.
       parameters:
         - name: email
           in: path
-          description: email of User to return
           required: true
+          description: Email of the user.
           schema:
             type: string
-            minLength: 11
-            maxLength: 100
       responses:
         "200":
-          description: successful operation
+          description: Successful operation
           content:
             application/json:
               schema:
@@ -359,25 +357,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnexpectedError"
+
   /user/username/{username}:
     get:
       tags:
         - User
-      summary: Get User by username
-      description: Returns a single user
-      operationId: getUserByUserName
+      summary: Get user by username
+      description: Retrieve a user by their username.
       parameters:
         - name: username
           in: path
-          description: username of User to return
           required: true
+          description: Username of the user.
           schema:
             type: string
-            minLength: 4
-            maxLength: 30
       responses:
         "200":
-          description: successful operation
+          description: Successful operation
           content:
             application/json:
               schema:
@@ -390,158 +386,116 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnexpectedError"
-  /user/{userId}:
-    get:
-      tags:
-        - User
-      summary: Get User by userID
-      description: Returns a single user
-      operationId: getUserByID
-      parameters:
-        - name: userId
-          in: path
-          description: ID of User to return
-          required: true
-          schema:
-            type: string
-            minLength: 24
-            maxLength: 24
-      responses:
-        "200":
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        "404":
-          description: User not found
-        "500":
-          description: An unexpected error occurred
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UnexpectedError"
-    delete:
-      tags:
-        - User
-      summary: Delete user by ID
-      description: Deletes a user
-      operationId: deleteUserByID
-      parameters:
-        - name: userId
-          in: path
-          description: ID of user to delete
-          required: true
-          schema:
-            type: string
-            minLength: 24
-            maxLength: 24
-      responses:
-        "200":
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        "404":
-          description: User not found
-        "500":
-          description: An unexpected error occurred
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UnexpectedError"
+  /user/update/{userId}:
     put:
       tags:
         - User
-      summary: Updates the user's email, username or password with form data
-      operationId: updateUser
+      summary: Update user details
+      description: Update information of an existing user by their ID.
       parameters:
         - name: userId
           in: path
-          description: ID of user to return
           required: true
+          description: The ID of the user to update.
           schema:
             type: string
-            minLength: 24
-            maxLength: 24
       requestBody:
-        description: User updated data
+        description: User object with updated information.
+        required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/UserInput"
-        required: true
       responses:
         "200":
-          description: successful operation
+          description: User successfully updated.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
-        "400":
-          description: Missing required parameters
         "404":
-          description: User not found
+          description: User not found.
         "500":
-          description: An unexpected error occurred
+          description: An unexpected error occurred.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnexpectedError"
+
+  /user/delete/{userId}:
+    delete:
+      tags:
+        - User
+      summary: Delete a user
+      description: Delete a user by their unique ID.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The ID of the user to delete.
+          schema:
+            type: string
+      responses:
+        "204":
+          description: User successfully deleted.
+        "404":
+          description: User not found.
+        "500":
+          description: An unexpected error occurred.
+
   /user/login:
     post:
       tags:
         - User
       summary: User login
-      description: User login
-      operationId: login
+      description: Authenticate a user and return a session token or JWT.
       requestBody:
-        description: User login
+        description: User login credentials.
+        required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserInput"
-        required: true
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required:
+                - email
+                - password
       responses:
         "200":
-          description: Successful operation
+          description: Login successful, returns a token.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
-        "400":
-          description: Invalid input
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+                type: object
+                properties:
+                  token:
+                    type: string
+                required:
+                  - token
+        "401":
+          description: Invalid credentials.
         "500":
-          description: An unexpected error occurred
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UnexpectedError"
+          description: An unexpected error occurred.
+
   /user/logout:
     post:
       tags:
         - User
       summary: User logout
-      description: User logout
-      operationId: logout
+      description: Invalidate the current session or JWT.
       responses:
         "200":
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
+          description: Logout successful.
+        "401":
+          description: Unauthorized, not logged in.
         "500":
-          description: An unexpected error occurred
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UnexpectedError"
+          description: An unexpected error occurred.
+
 components:
   schemas:
     Post:
@@ -549,98 +503,100 @@ components:
       properties:
         id:
           type: string
-        title:
-          type: string
         content:
           type: string
-        sender:
+        senderId:
           type: string
+        createdAt:
+          type: string
+          format: date-time
       required:
         - id
-        - title
-        - sender
+        - content
+        - senderId
+        - createdAt
     PostInput:
       type: object
       properties:
-        title:
-          type: string
         content:
           type: string
-        sender:
+        senderId:
           type: string
       required:
-        - title
-        - sender
+        - content
+        - senderId
     Comment:
       type: object
       properties:
         id:
           type: string
-        postId:
-          type: string
         content:
           type: string
-        sender:
+        postId:
           type: string
-        date:
+        senderId:
           type: string
+        createdAt:
+          type: string
+          format: date-time
       required:
         - id
-        - postId
         - content
-        - sender
-        - date
+        - postId
+        - senderId
+        - createdAt
     CommentInput:
       type: object
       properties:
-        postId:
-          type: string
         content:
           type: string
-        sender:
+        postId:
+          type: string
+        senderId:
           type: string
       required:
-        - postId
         - content
-        - sender
+        - postId
+        - senderId
     User:
       type: object
       properties:
-        _id:
+        id:
           type: string
-          minLength: 24
-          maxLength: 24
         username:
           type: string
-          description: must be unique
         email:
           type: string
-          description: must be unique
-        password:
+        createdAt:
           type: string
-        __v:
-          type: integer
+          format: date-time
+      required:
+        - id
+        - username
+        - email
+        - createdAt
     UserInput:
       type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
       required:
         - username
         - email
         - password
-      properties:
-        username:
-          type: string
-        email:
-          type: string
-        password:
-          type: string
-    Error:
-      type: object
-      properties:
-        error:
-          type: string
     UnexpectedError:
       type: object
       properties:
-        error:
+        message:
           type: string
-          example: An error occurred.
+        code:
+          type: integer
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
