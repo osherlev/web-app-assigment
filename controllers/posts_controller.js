@@ -29,7 +29,7 @@ const getPostById = async (req, res) => {
       if (post) {
         res.send(post);
       } else {
-        res.status(404).send("Post was not found");
+        return res.status(404).send("Post was not found");
       }
     } catch (error) {
         return handleMongoQueryError(res, error);
@@ -57,6 +57,7 @@ const getPostById = async (req, res) => {
       const updatedData = req.body;
       const post = await Post.findByIdAndUpdate(req.params.id, updatedData, {
         new: true,
+        runValidators: true
       });
       if (!post) {
         return res.status(404).json({ message: "Post not found" });
