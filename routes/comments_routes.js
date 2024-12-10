@@ -8,4 +8,10 @@ router.get("/bySender", commentController.getCommentsBySender);
 
 router.get("/byId/:id", commentController.getCommentById);
 
+router.get("/post/:post_id", commentController.getCommentsByPost);
+
+router.put("update/:id", commentController.updateComment);
+
+router.delete("delete/:id", commentController.deleteComment);
+
 module.exports = router;
