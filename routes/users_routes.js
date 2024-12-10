@@ -8,4 +8,12 @@ router.get("/", userController.getAllUsers);
 
 router.get("/:id", userController.getUserById);
 
+router.get("/email/:email", userController.getUserByEmail);
+
+router.get("/username/:username", userController.getUserByUserName);
+
+router.put("/:id", userController.updateUser);
+
+router.delete("/:id", userController.deleteUser);
+
 module.exports = router;
