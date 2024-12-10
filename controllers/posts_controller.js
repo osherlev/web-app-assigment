@@ -32,7 +32,7 @@ const getPostById = async (req, res) => {
         res.status(404).send("Post was not found");
       }
     } catch (error) {
-      res.status(400).send(error.message);
+        return handleMongoQueryError(res, error);
     }
   };
   
@@ -48,7 +48,7 @@ const getPostById = async (req, res) => {
       }
       res.status(200).json(posts);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+        return handleMongoQueryError(res, error);
     }
   };
   
@@ -63,7 +63,7 @@ const getPostById = async (req, res) => {
       }
       res.status(200).json(post);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+        return handleMongoQueryError(res, error);
     }
   };
   
