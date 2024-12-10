@@ -22,10 +22,10 @@ const getCommentsBySender = async (req, res) => {
     let comments;
     try {
       comments = await Comment.find({ sender: filter })
-      if (posts.length === 0) {
+      if (comments.length === 0) {
         return res
           .status(404)
-          .json({ message: "No posts found for this sender" });
+          .json({ message: "No comments found for this sender" });
       }
       res.status(200).send(comments);
     } catch (error) {
