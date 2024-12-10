@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon --env-file=.env app.js",
-    "start": "node --env-file=.env app.js",
+    "dev": "nodemon app.js",
+    "start": "node app.js",
     "test": "jest --coverage --detectOpenHandles --forceExit"
   },
   "author": "Osher Levi and Alik Kholodenko",
