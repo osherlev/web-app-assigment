@@ -9,7 +9,7 @@ const registerUser = async (req, res) => {
         const userExists = await User.findOne({email});
 
         if (userExists) {
-            return res.status(400).json({message: "User already exists."});
+            return res.status(400).json({error: "User already exists."});
         }
         const user = await User.create({username, email, password});
         return res.status(201).json({id: user._id, username: user.username, email: user.email});
@@ -31,7 +31,7 @@ const getUserById = async (req, res) => {
     try {
         const user = await User.findById(req.params.id, "-password");
         if (!user) {
-            return res.status(404).json({message: "User not found."});
+            return res.status(404).json({error: "User not found."});
         }
         res.status(200).json(user);
     } catch (error) {
@@ -40,10 +40,14 @@ const getUserById = async (req, res) => {
 };
 
 const getUserByEmail = async (req, res) => {
+    const email = req.params.email;
+    if (!validateEmail(email)) {
+        return res.status(400).json({error: 'Invalid email format'});
+    }
     try {
-        const user = await User.findOne({email: req.params.email}, "-password");
+        const user = await User.findOne({email}, "-password");
         if (!user) {
-            return res.status(404).json({message: "User not found."});
+            return res.status(404).json({error: "User not found."});
         }
         res.status(200).json(user);
     } catch (error) {
@@ -58,7 +62,7 @@ const getUserByUserName = async (req, res) => {
             "-password"
         );
         if (!user) {
-            return res.status(404).json({message: "User not found."});
+            return res.status(404).json({error: "User not found."});
         }
         res.status(200).json(user);
     } catch (error) {
@@ -93,7 +97,7 @@ const deleteUser = async (req, res) => {
     try {
         const userId = req.params.id;
         const user = await User.findByIdAndDelete(userId);
-        if (!user) return res.status(404).json({message: "User not found"});
+        if (!user) return res.status(404).json({error: "User not found"});
         res.status(200).json({message: "User deleted successfully"});
     } catch (error) {
         return handleMongoQueryError(res, error);
@@ -124,6 +128,12 @@ const logout = async (req, res) => {
         return res.status(500).json({error: "An error occurred while logging out.", err});
     }
 }
+
+const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+};
+
 
 module.exports = {
     registerUser,
