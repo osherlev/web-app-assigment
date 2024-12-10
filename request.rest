@@ -52,8 +52,6 @@ Content-Type: application/json
 # 2. Get a Comment by Sender 
 GET http://localhost:3000/comment/bySender?sender=Alik
 
-###
-
 ### 
 # 3. Get a Comment by ID 
 GET http://localhost:3000/comment/byId/67585d072177f17c0d17b604
