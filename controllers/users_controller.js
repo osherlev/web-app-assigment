@@ -1,4 +1,5 @@
 const User = require("../models/users_model");
+const {handleMongoQueryError} = require("../utils/db_util");
 
 const registerUser = async (req, res) => {
     try {
@@ -9,9 +10,9 @@ const registerUser = async (req, res) => {
             return res.status(400).json({message: "User already exists."});
         }
         const user = await User.create({username, email, password});
-        res.status(201).json({id: user._id, username: user.username, email: user.email});
+        return res.status(201).json({id: user._id, username: user.username, email: user.email});
     } catch (error) {
-        res.status(500).json({error: error.message});
+        return handleMongoQueryError(res, error);
     }
 };
 
@@ -20,7 +21,7 @@ const getAllUsers = async (req, res) => {
         const users = await User.find({}, "-password");
         res.status(200).json(users);
     } catch (error) {
-        res.status(500).json({error: error.message});
+        return handleMongoQueryError(res, error);
     }
 };
 
@@ -32,7 +33,7 @@ const getUserById = async (req, res) => {
         }
         res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({error: error.message});
+        return handleMongoQueryError(res, error);
     }
 };
 
