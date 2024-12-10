@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app.js",
-    "start": "node app.js"
+    "dev": "nodemon --env-file=.env app.js",
+    "start": "node --env-file=.env app.js"
   },
   "author": "Osher Levi and Alik Kholodenko",
   "license": "ISC",
