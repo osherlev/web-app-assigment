@@ -34,7 +34,11 @@ Content-Type: application/json
   "content": "Updated content for the post."
 }
 
-### # --------------------------------- # Comments API # ---------------------------------
+### 
+
+# --------------------------------- 
+# Comments API 
+# ---------------------------------
 
 # 1. Add a Comment to a Post 
 POST http://localhost:3000/comment/createComment 
