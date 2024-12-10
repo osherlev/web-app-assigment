@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const userModel = require("../models/users_model");
 const token = require("../utils/token_util");
 const bcrypt = require('bcrypt');
-const jest = require("jest");
 
 let app;
 beforeAll(async () => {
