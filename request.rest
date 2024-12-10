@@ -52,8 +52,6 @@ Content-Type: application/json
 # 2. Get a Comment by Sender 
 GET http://localhost:3000/comment/bySender?sender=Alik
 
-###
-
 ### 
 # 3. Get a Comment by ID 
 GET http://localhost:3000/comment/byId/67585d072177f17c0d17b604
@@ -74,3 +72,60 @@ Content-Type: application/json
 ### 
 # 6. Delete a Comment 
 DELETE http://localhost:3000/comment/delete/67585d072177f17c0d17b604
+
+###
+
+# --------------------------------- 
+# Users API 
+# ---------------------------------
+
+### 
+# 1. Create a New User 
+POST http://localhost:3000/user/registerUser 
+Content-Type: application/json
+
+{
+"username": "Osher", "email": "osherlev317@gmail.com", "password": "Alik is awesome"
+}
+
+### 
+# 2. Get All Users 
+GET http://localhost:3000/user
+
+### 
+# 3. Get a User by ID 
+GET http://localhost:3000/user/67587997adbef12fc7f01331
+
+### 
+# 4. Get a User by Email 
+GET http://localhost:3000/user/email/osherlev317@gmail.com
+
+### 
+# 5. Get a User by Username 
+GET http://localhost:3000/user/username/Osher
+
+### 
+# 6. Update User 
+PUT http://localhost:3000/user/67587997adbef12fc7f01331
+Content-Type: application/json
+
+{
+"username": "Osher1", "email": "osherlev317@gmail.com", "password": "Alik"
+}
+
+### 
+# 7. Delete User 
+DELETE http://localhost:3000/user/67587997adbef12fc7f01331
+
+### 
+# 8. Login User 
+POST http://localhost:3000/user/login 
+Content-Type: application/json
+
+{
+"username": "Osher1", "password": "Alik"
+}
+
+### 
+# 9. Logout User 
+POST http://localhost:3000/user/logout
