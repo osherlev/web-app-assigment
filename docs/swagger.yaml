@@ -493,73 +493,85 @@ components:
     Post:
       type: object
       properties:
-        id:
+        _id:
           type: string
+          minLength: 24
+          maxLength: 24
         content:
           type: string
-        senderId:
+        title:
           type: string
-      required:
-        - id
-        - content
-        - senderId
+        sender:
+          type: string
+        __v:
+          type: integer
+
     PostInput:
       type: object
+      required:
+        - title
+        - sender
       properties:
         content:
           type: string
-        senderId:
+        sender:
           type: string
-      required:
-        - content
-        - senderId
+        title:
+          type: string
+
     Comment:
       type: object
       properties:
-        id:
+        _id:
           type: string
+          minLength: 24
+          maxLength: 24
+        postID:
+          type: string
+          minLength: 24
+          maxLength: 24
         content:
           type: string
-        postId:
-          type: string
-        senderId:
+        sender:
           type: string
         date:
           type: string
           format: date-time
-      required:
-        - id
-        - content
-        - postId
-        - senderId
+        __v:
+          type: integer
     CommentInput:
       type: object
+      required:
+        - content
+        - sender
       properties:
         content:
           type: string
-        postId:
+        sender:
           type: string
-        senderId:
-          type: string
-      required:
-        - content
-        - postId
-        - senderId
     User:
       type: object
       properties:
-        id:
+        _id:
           type: string
+          minLength: 24
+          maxLength: 24
         username:
           type: string
+          description: must be unique
         email:
           type: string
-      required:
-        - id
-        - username
-        - email
+          description: must be unique
+        password:
+          type: string
+        __v:
+          type: integer
     UserInput:
       type: object
+      required:
+        - username
+        - email
+        - password
       properties:
         username:
           type: string
@@ -567,14 +579,22 @@ components:
           type: string
         password:
           type: string
-      required:
-        - username
-        - email
-        - password
     UnexpectedError:
       type: object
       properties:
-        message:
+        error:
           type: string
-        code:
-          type: integer
+          example: An error occurred.
+  requestBodies:
+    Post:
+      description: Post object input
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PostInput'
+    Comment:
+      description: Comment object input
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CommentInput'
