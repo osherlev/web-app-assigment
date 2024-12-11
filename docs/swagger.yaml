@@ -375,7 +375,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: "#/components/schemas/UnexpectedError"
         "500":
           description: An unexpected error occurred
           content:
@@ -499,14 +499,10 @@ components:
           type: string
         senderId:
           type: string
-        createdAt:
-          type: string
-          format: date-time
       required:
         - id
         - content
         - senderId
-        - createdAt
     PostInput:
       type: object
       properties:
@@ -528,7 +524,7 @@ components:
           type: string
         senderId:
           type: string
-        createdAt:
+        date:
           type: string
           format: date-time
       required:
@@ -536,7 +532,6 @@ components:
         - content
         - postId
         - senderId
-        - createdAt
     CommentInput:
       type: object
       properties:
@@ -559,14 +554,10 @@ components:
           type: string
         email:
           type: string
-        createdAt:
-          type: string
-          format: date-time
       required:
         - id
         - username
         - email
-        - createdAt
     UserInput:
       type: object
       properties:
@@ -587,8 +578,3 @@ components:
           type: string
         code:
           type: integer
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
