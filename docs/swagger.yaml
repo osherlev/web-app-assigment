@@ -398,13 +398,12 @@ paths:
             schema:
               type: object
               properties:
-                email:
+                username:
                   type: string
-                  format: email
                 password:
                   type: string
               required:
-                - email
+                - username
                 - password
       responses:
         "200":
