@@ -50,17 +50,17 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnexpectedError"
-  /post/bySender/{senderId}:
+  /post/?sender={sender}:
     get:
       tags:
         - Post
       summary: Get posts by sender
       description: Retrieve all posts made by a specific sender.
       parameters:
-        - name: senderId
-          in: path
+        - name: sender
+          in: query
           required: true
-          description: The ID of the sender.
+          description: The name of the sender.
           schema:
             type: string
       responses:
@@ -100,13 +100,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Post"
+  /post/{id}:
     put:
       tags:
         - Post
       summary: Update a post
       description: Update the content of an existing post.
       parameters:
-        - name: postId
+        - name: id
           in: path
           required: true
           description: The ID of the post to update.
@@ -157,17 +158,17 @@ paths:
                 $ref: "#/components/schemas/Comment"
         "404":
           description: Comment not found.
-  /comment/bySender:
+  /comment/bySender?sender={sender}:
     get:
       tags:
         - Comment
       summary: Get comments by sender
       description: Retrieve comments made by a specific sender.
       parameters:
-        - name: senderId
+        - name: sender
           in: query
           required: true
-          description: ID of the sender to retrieve comments for.
+          description: name of the sender to retrieve comments for.
           schema:
             type: string
       responses:
@@ -351,6 +352,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnexpectedError"
+  /user/registerUser:
     post:
       tags:
         - User
@@ -433,7 +435,7 @@ paths:
           description: Unauthorized, not logged in.
         "500":
           description: An unexpected error occurred.
-  /user/update/{userId}:
+  /user/{userId}:
     put:
       tags:
         - User
@@ -468,14 +470,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnexpectedError"
-  /user/delete/{userId}:
+  /user/{id}:
     delete:
       tags:
         - User
       summary: Delete a user
       description: Delete a user by their unique ID.
       parameters:
-        - name: userId
+        - name: id
           in: path
           required: true
           description: The ID of the user to delete.
@@ -542,9 +544,12 @@ components:
     CommentInput:
       type: object
       required:
+        - -postId
         - content
         - sender
       properties:
+        postId:
+          type: string
         content:
           type: string
         sender:
