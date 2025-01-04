@@ -8,7 +8,7 @@ const registerUser = async (req: Request, res: Response): Promise<any> => {
     try {
         const {username, email, password}: { username: string; email: string; password: string } = req.body;
 
-        if(!username || !email ||!password){
+        if (!username || !email || !password) {
             return res.status(400).json({error: "All fields are required."});
         }
         // Validate password
@@ -27,7 +27,7 @@ const registerUser = async (req: Request, res: Response): Promise<any> => {
         });
 
         const savedUser: IUser = await user.save() as IUser;
-        return res.status(200).json(savedUser);
+        return res.status(200).json({"email": savedUser.email, "username": savedUser.username, "id": savedUser._id});
     } catch (err: any) {
         console.warn("Error registering user:", err);
         if (err.code === 11000) {
@@ -43,7 +43,7 @@ const registerUser = async (req: Request, res: Response): Promise<any> => {
 // Get All Users
 const getAllUsers = async (req: Request, res: Response): Promise<any> => {
     try {
-        const users: IUser[] | null = await User.find() as IUser[] | null;
+        const users: IUser[] | null = await User.find().select("-password").lean() as IUser[] | null;
         return res.status(200).json(users);
     } catch (err: any) {
         console.warn("Error fetching users:", err);
@@ -53,7 +53,9 @@ const getAllUsers = async (req: Request, res: Response): Promise<any> => {
 
 const getUserById = async (req: Request, res: Response): Promise<any> => {
     try {
-        const user: IUser | null = await User.findById(req.params.id, "-password") as IUser | null;
+        const user: IUser | null = await User.findById(req.params.id, "-password").select("-password")
+            .lean() as IUser | null;
+
         if (!user) {
             return res.status(404).json({error: "User not found."});
         }
@@ -69,7 +71,8 @@ const getUserByEmail = async (req: Request, res: Response): Promise<any> => {
         return res.status(400).json({error: 'Invalid email format'});
     }
     try {
-        const user: IUser | null = await User.findOne({email}, "-password") as IUser | null;
+        const user: IUser | null = await User.findOne({email}, "-password").select("-password")
+            .lean() as IUser | null;
         if (!user) {
             return res.status(404).json({error: "User not found."});
         }
@@ -81,7 +84,8 @@ const getUserByEmail = async (req: Request, res: Response): Promise<any> => {
 
 const getUserByUserName = async (req: Request, res: Response): Promise<any> => {
     try {
-        const user: IUser | null = await User.findOne({username: req.params.username}, "-password") as IUser | null;
+        const user: IUser | null = await User.findOne({username: req.params.username}, "-password").select("-password")
+            .lean() as IUser | null;
         if (!user) {
             return res.status(404).json({error: "User not found."});
         }
@@ -108,7 +112,8 @@ const updateUser = async (req: Request, res: Response): Promise<any> => {
         const user: IUser | null = await User.findByIdAndUpdate(userId, updates, {
             new: true,
             runValidators: true
-        }) as IUser | null;
+        }).select("-password")
+            .lean() as IUser | null;
         if (!user) {
             return res.status(404).json({error: 'User not found.'});
         }
@@ -151,7 +156,10 @@ const login = async (req: Request, res: Response): Promise<any> => {
                 .status(400)
                 .json({error: "wrong credentials. Please try again."});
         }
-        const {accessToken, refreshToken,}: { accessToken: string; refreshToken: string } = await token.generateTokens(existingUser);
+        const {accessToken, refreshToken,}: {
+            accessToken: string;
+            refreshToken: string
+        } = await token.generateTokens(existingUser);
         return token.setTokens(accessToken, refreshToken, res);
     } catch (err) {
         console.warn("Error while logging in:", err);
