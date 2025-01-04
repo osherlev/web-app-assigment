@@ -2,11 +2,11 @@
   "name": "web-app-assignment",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "src/app.ts",
   "scripts": {
-    "dev": "nodemon app.js",
-    "start": "node app.js",
-    "test": "jest --coverage --detectOpenHandles --forceExit"
+    "dev": "nodemon src/app.ts",
+    "start": "node src/app.ts",
+    "test": "tsc && jest --coverage --detectOpenHandles --forceExit"
   },
   "author": "Osher Levi and Alik Kholodenko",
   "license": "ISC",

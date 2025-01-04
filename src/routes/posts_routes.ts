@@ -1,6 +1,6 @@
-const express = require("express");
-const router = express.Router();
-const postController = require("../controllers/posts_controller");
+import { Router } from 'express';
+const router: Router = Router();
+import * as postController from "../controllers/posts_controller";
 
 router.post("/createPost", postController.createPost);
 
@@ -12,4 +12,4 @@ router.get("/", postController.getPostsBySender);
 
 router.put("/:id", postController.updatePost);
 
-module.exports = router;
+export default router;
