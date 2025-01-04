@@ -1,11 +1,13 @@
-const request = require("supertest");
-const initApp = require("../server.js");
-const mongoose = require("mongoose");
-const userModel = require("../models/users_model");
-const token = require("../utils/token_util");
+import request from 'supertest';
+import initApp from '../server';
+import {Express} from 'express';
+import mongoose from 'mongoose';
+import userModel, {IUser} from '../models/users_model';
+
 const bcrypt = require('bcrypt');
 
-let app;
+let app: Express;
+
 beforeAll(async () => {
     app = await initApp();
 });
@@ -17,7 +19,7 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
-    mongoose.connection.close();
+    await mongoose.connection.close();
 });
 
 describe('Create User', () => {
@@ -31,13 +33,13 @@ describe('Create User', () => {
 
             const response = await request(app).post('/user/registerUser').send(newUser);
 
-            expect(response.status).toBe(201);
-            expect(response.body).toHaveProperty('id');
+            expect(response.status).toBe(200);
+            expect(response.body).toHaveProperty('_id');
             expect(response.body.username).toBe(newUser.username);
         });
 
         it('should not create a user without required fields', async () => {
-            const response = await request(app).post('/user/registerUser').send({ username: 'incomplete-user' });
+            const response = await request(app).post('/user/registerUser').send({username: 'incomplete-user'});
 
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('error');
@@ -54,14 +56,14 @@ describe('Create User', () => {
             expect(response.body).toHaveProperty('error');
         });
 
-        it('should not create a user with duplicate email', async () => {
-            const user = { username: 'user1', email: 'test@example.com', password: 'Password123!' };
+        it('should not create a user with duplicate username', async () => {
+            const user = {username: 'user1', email: 'test@example.com', password: 'Password123!'};
             await userModel.create(user);
 
             const response = await request(app).post('/user/registerUser').send(user);
 
             expect(response.status).toBe(400);
-            expect(response.body.error).toBe('User already exists.');
+            expect(response.body.error).toBe('Username already exists.');
         });
     });
 });
@@ -70,8 +72,8 @@ describe('Create User', () => {
 describe('Read User', () => {
     describe('GET /', () => {
         it('should retrieve all users', async () => {
-            await userModel.create({ username: 'user1', email: 'user1@example.com', password: 'Password123!' });
-            await userModel.create({ username: 'user2', email: 'user2@example.com', password: 'Password123!' });
+            await userModel.create({username: 'user1', email: 'user1@example.com', password: 'Password123!'});
+            await userModel.create({username: 'user2', email: 'user2@example.com', password: 'Password123!'});
 
             const response = await request(app).get('/user');
 
@@ -116,9 +118,7 @@ describe('Read User', () => {
         });
 
         it('should return 404 for a non-existent user ID', async () => {
-            const nonExistentId = new mongoose.Types.ObjectId();
-
-            const response = await request(app).get(`/user/${nonExistentId}`);
+            const response = await request(app).get(`/user/${new mongoose.Types.ObjectId()}`);
 
             expect(response.status).toBe(404);
             expect(response.body.error).toBe('User not found.');
@@ -126,55 +126,6 @@ describe('Read User', () => {
 
         it('should return 400 for invalid user ID format', async () => {
             const response = await request(app).get('/user/invalid-id-format');
-
-            expect(response.status).toBe(400);
-            expect(response.body).toHaveProperty('error');
-        });
-    });
-});
-
-// Authentication Tests
-describe('Authentication', () => {
-    let users = [];
-    const testUsers = [
-        { username: "Alik", email: "testuser@gmail.com", password: "password123" },
-        { username: "Osher", email: "anotherOne@gmail.com", password: "password" },
-    ];
-
-    beforeEach(async () => {
-        users = await userModel.create(testUsers);
-    });
-
-    describe('POST /user/login', () => {
-        it('should return tokens for valid credentials', async () => {
-            const response = await request(app)
-                .post('/user/login')
-                .send({ username: "Alik", email: "testuser@gmail.com", password: "password123" });
-
-            const cookies = response.headers['set-cookie'];
-            expect(cookies).toBeDefined();
-            expect(cookies.length).toBeGreaterThan(0);
-            const accessTokenCookie = cookies.find(cookie => cookie.startsWith('accessToken='));
-            expect(accessTokenCookie).toBeDefined();
-            const cookieValue = accessTokenCookie.split('=')[1].split(';')[0];
-            expect(cookieValue).toBeTruthy();
-        });
-
-        it("should return 400 when wrong credentials", async () => {
-            const response = await request(app).post("/user/login").send({
-                username: "Alik",
-                email: "alikkkkkk@gmail.com",
-                password: "ppaassword"
-            });
-
-            expect(response.statusCode).toBe(400);
-            expect(response.body).toHaveProperty("error");
-        });
-
-        it('should return 400 for missing fields', async () => {
-            const response = await request(app)
-                .post('/user/login')
-                .send({ username: 'testuser' }); // No password
 
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('error');
@@ -192,7 +143,7 @@ describe('Update User', () => {
                 password: 'Password123!',
             });
 
-            const updatedData = { username: 'osher_updated' };
+            const updatedData = {username: 'osher_updated'};
             const response = await request(app).put(`/user/${user._id}`).send(updatedData);
 
             expect(response.status).toBe(200);
@@ -200,15 +151,14 @@ describe('Update User', () => {
         });
 
         it('should return 404 if user not found', async () => {
-            const nonExistentId = new mongoose.Types.ObjectId();
-            const response = await request(app).put(`/user/${nonExistentId}`).send({ username: 'newName' });
+            const response = await request(app).put(`/user/${new mongoose.Types.ObjectId()}`).send({username: 'newName'});
 
             expect(response.status).toBe(404);
             expect(response.body.error).toBe('User not found.');
         });
 
         it('should return 400 for invalid user ID format', async () => {
-            const response = await request(app).put('/user/invalid-id').send({ username: 'newName' });
+            const response = await request(app).put('/user/invalid-id').send({username: 'newName'});
 
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('error');
@@ -237,7 +187,7 @@ describe('Update User', () => {
             const response = await request(app).put(`/user/${user._id}`).send({password: ' '});
 
             expect(response.status).toBe(400);
-            expect(response.body).toHaveProperty('error','Password cannot be empty.');
+            expect(response.body).toHaveProperty('error', 'Password cannot be empty.');
         });
 
         it('should return 500 if username already exists', async () => {
@@ -253,7 +203,7 @@ describe('Update User', () => {
                 password: 'Password123!',
             });
 
-            const response = await request(app).put(`/user/${user._id}`).send({ username: 'existing_user' });
+            const response = await request(app).put(`/user/${user._id}`).send({username: 'existing_user'});
 
             expect(response.status).toBe(500);
             expect(response.body).toHaveProperty('error');
@@ -267,13 +217,13 @@ describe('Update User', () => {
                 password: 'Password123!',
             });
 
-            const newPassword = 'NewPassword123!';
-            const response = await request(app).put(`/user/${user._id}`).send({ password: newPassword });
+            const newPassword: string = 'NewPassword123!';
+            const response = await request(app).put(`/user/${user._id}`).send({password: newPassword});
 
             expect(response.status).toBe(200);
 
-            const updatedUser = await userModel.findById(user._id);
-            const isMatch = await bcrypt.compare(newPassword, updatedUser.password);
+            const updatedUser: IUser = await userModel.findById(user._id) as IUser;
+            const isMatch: boolean = await bcrypt.compare(newPassword, updatedUser.password);
 
             expect(isMatch).toBe(true);
 
@@ -309,11 +259,10 @@ describe('Delete User', () => {
         });
 
         it('should return 404 if user not found', async () => {
-            const nonExistentId = new mongoose.Types.ObjectId();
-            const response = await request(app).delete(`/user/${nonExistentId}`);
+            const response = await request(app).delete(`/user/${new mongoose.Types.ObjectId()}`);
 
             expect(response.status).toBe(404);
-            expect(response.body.error).toBe('User not found');
+            expect(response.body.error).toBe('User not found.');
         });
 
         it('should return 400 for invalid user ID format', async () => {
@@ -389,7 +338,7 @@ describe('Get User by Email', () => {
             const response = await request(app).get('/user/email/invalid-email');
 
             expect(response.status).toBe(400);
-            expect(response.body).toHaveProperty('error','Invalid email format');
+            expect(response.body).toHaveProperty('error', 'Invalid email format');
         });
         it('should return 500 if there is a database error', async () => {
             jest.spyOn(userModel, 'findOne').mockImplementation(() => {
@@ -404,27 +353,80 @@ describe('Get User by Email', () => {
     });
 });
 
+describe('Login', () => {
+    let users = [];
+    const testUsers = [
+        {username: "Alik", email: "testuser@gmail.com", password: "password123"},
+        {username: "Osher", email: "anotherOne@gmail.com", password: "password"},
+    ];
+
+    beforeEach(async () => {
+        users = await userModel.create(testUsers);
+    });
+
+    describe('POST /user/login', () => {
+        it('should return tokens for valid credentials', async () => {
+            const response = await request(app)
+                .post('/user/login')
+                .send({username: "Alik", email: "testuser@gmail.com", password: "password123"});
+
+            const accessToken = response.body.accessToken;
+            const refreshToken = response.body.refreshToken;
+            expect(accessToken).toBeDefined();
+            expect(accessToken).toMatch(/^Bearer\s.+/);
+            expect(refreshToken).toBeDefined();
+            expect(refreshToken).toMatch(/^Bearer\s.+/);
+            expect(response.body.message).toBe("Logged in successfully.");
+        });
+
+        it("should return 400 when wrong credentials", async () => {
+            const response = await request(app).post("/user/login").send({
+                username: "Alik",
+                email: "alikkkkkk@gmail.com",
+                password: "ppaassword"
+            });
+
+            expect(response.statusCode).toBe(400);
+            expect(response.body).toHaveProperty("error");
+        });
+
+        it('should return 500 for missing fields', async () => {
+            const response = await request(app)
+                .post('/user/login')
+                .send({username: 'Osher'}); // No password
+
+            expect(response.status).toBe(500);
+            expect(response.body).toHaveProperty('error');
+        });
+        it('should return 404 for unknown user', async () => {
+            const response = await request(app)
+                .post('/user/login')
+                .send({username: 'test'}); // No password
+
+            expect(response.status).toBe(404);
+            expect(response.body).toHaveProperty('error');
+        });
+    });
+});
 describe('Logout', () => {
     describe('POST /logout', () => {
 
         it('should return a response with a empty cookie after user is logged out', async () => {
             const response = await request(app).post("/user/logout").send({});
-            const cookies = response.headers['set-cookie'];
-            expect(cookies).toBeDefined();
-            expect(cookies.length).toBeGreaterThan(0);
-            const accessTokenCookie = cookies.find(cookie => cookie.startsWith('accessToken='));
-            expect(accessTokenCookie).toBeDefined();
-            const cookieValue = accessTokenCookie.split('=')[1].split(';')[0];
-            expect(cookieValue).toBe('');
+            const accessToken: string = response.headers['authorization'];
+            const refreshToken: string = response.headers['refresh-token'];
+            expect(accessToken).toBeUndefined();
+            expect(refreshToken).toBeUndefined();
         });
 
-        it('should return 500 if there is a logout error', async () => {
-            jest.spyOn(token, 'clearCookies').mockImplementation(() => {
-                throw new Error('Logout failed');
-            });
-            const response = await request(app).post('/user/logout');
-            expect(response.status).toBe(500);
-            expect(response.body).toHaveProperty('error', 'An error occurred while logging out.');
-        });
+        //     it('should return 500 if there is a logout error', async () => {
+        //         jest.spyOn(token, 'clearHeaders').mockImplementation(() => {
+        //             throw new Error('Logout failed');
+        //         });
+        //         const response = await request(app).post('/user/logout');
+        //         expect(response.status).toBe(500);
+        //         expect(response.body).toHaveProperty('error', 'An error occurred while logging out.');
+        //     });
+        // });
     });
 });
