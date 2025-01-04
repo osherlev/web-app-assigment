@@ -1,6 +1,18 @@
 import {Response} from "express";
 import mongoose, {ConnectOptions} from "mongoose";
 
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    UnexpectedError:
+ *      type: object
+ *      properties:
+ *        error:
+ *          type: string
+ *          example: An error occurred.
+ */
+
 export const connectDB = async (): Promise<void> => {
     try {
         await mongoose.connect(process.env.DB_URL as string);
