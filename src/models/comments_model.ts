@@ -11,12 +11,15 @@ const commentSchema = new Schema<IComment>({
     postId: {
         type: Schema.Types.ObjectId,
         ref: "Post",
+        required: true
     },
     content: {
         type: String,
+        required: true
     },
     sender: {
         type: String,
+        required: true
     },
 });
 
