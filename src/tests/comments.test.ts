@@ -1,11 +1,16 @@
 import request from 'supertest';
 import initApp from '../server';
-import {Express} from 'express';
-import mongoose  from 'mongoose';
+import { Express } from 'express';
+import mongoose from 'mongoose';
 import postModel from '../models/posts_model';
 import commentModel from '../models/comments_model';
 
 let app: Express;
+
+jest.mock("../utils/authMiddleware", () => ({
+    __esModule: true,
+    default: jest.fn((req, res, next) => next()),
+}));
 
 beforeAll(async () => {
     app = await initApp();
@@ -48,7 +53,7 @@ describe("/comment/createComment", () => {
             .send({});
 
         expect(response.status).toBe(400);
-        expect(response.body).toEqual({error: "Post ID is required."});
+        expect(response.body).toEqual({ error: "Post ID is required." });
     })
 
     it('should return 404 if there is an error during fetching not existing comments', async () => {
