@@ -31,7 +31,8 @@ Content-Type: application/json
 
 {
   "title": "Updated Post Title",
-  "content": "Updated content for the post."
+  "content": "Updated content for the post.",
+  "sender": "Osher"
 }
 
 ### 
@@ -66,7 +67,8 @@ PUT http://localhost:3000/comment/update/67585d072177f17c0d17b604
 Content-Type: application/json
 
 {
-"content": "Updated comment content."
+"content": "Updated comment content.",
+  "sender": "Alik"
 }
 
 ### 
