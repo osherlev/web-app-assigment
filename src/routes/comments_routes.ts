@@ -1,6 +1,7 @@
 import { Router } from 'express';
 const router: Router = Router();
 import * as commentController from "../controllers/comments_controller";
+import authMiddleware from '../utils/authMiddleware';
 /**
  * @swagger
  * tags:
@@ -77,7 +78,7 @@ import * as commentController from "../controllers/comments_controller";
  *               schema:
  *                 $ref: "#/components/schemas/Comment"
  */
-router.post("/createComment", commentController.createComment);
+router.post("/createComment", authMiddleware, commentController.createComment);
 
 /**
  * @swagger
@@ -108,7 +109,7 @@ router.post("/createComment", commentController.createComment);
  *         "500":
  *           description: Internal server error.
  */
-router.get("/bySender", commentController.getCommentsBySender);
+router.get("/bySender", authMiddleware, commentController.getCommentsBySender);
 
 /**
  * @swagger
@@ -135,7 +136,7 @@ router.get("/bySender", commentController.getCommentsBySender);
  *         "404":
  *           description: Comment not found.
  */
-router.get("/byId/:id", commentController.getCommentById);
+router.get("/byId/:id", authMiddleware, commentController.getCommentById);
 /**
  * @swagger
  *   /comment/post/{postId}:
@@ -165,7 +166,7 @@ router.get("/byId/:id", commentController.getCommentById);
  *         "500":
  *           description: Internal server error.
  */
-router.get("/post/:post_id", commentController.getCommentsByPost);
+router.get("/post/:post_id", authMiddleware, commentController.getCommentsByPost);
 
 /**
  * @swagger
@@ -210,7 +211,7 @@ router.get("/post/:post_id", commentController.getCommentsByPost);
  *             schema:
  *               $ref: '#/components/schemas/UnexpectedError'
  */
-router.put("/update/:id", commentController.updateComment);
+router.put("/update/:id", authMiddleware, commentController.updateComment);
 
 /**
  * @swagger
@@ -231,6 +232,6 @@ router.put("/update/:id", commentController.updateComment);
  *         "204":
  *           description: Comment successfully deleted.
  */
-router.delete("/delete/:id", commentController.deleteComment);
+router.delete("/delete/:id", authMiddleware, commentController.deleteComment);
 
 export default router;

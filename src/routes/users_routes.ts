@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import * as userController from "../controllers/users_controller";
-
+import authMiddleware from "../utils/authMiddleware";
 /**
  * @swagger
  * tags:
@@ -105,7 +105,7 @@ router.post("/registerUser", userController.registerUser);
  *               schema:
  *                 $ref: "#/components/schemas/UnexpectedError"
  */
-router.get("/", userController.getAllUsers);
+router.get("/", authMiddleware, userController.getAllUsers);
 
 /**
  * @swagger
@@ -142,7 +142,7 @@ router.get("/", userController.getAllUsers);
  *             schema:
  *               $ref: '#/components/schemas/UnexpectedError'
  */
-router.get("/:id", userController.getUserById);
+router.get("/:id", authMiddleware, userController.getUserById);
 
 /**
  * @swagger
@@ -175,7 +175,7 @@ router.get("/:id", userController.getUserById);
  *               schema:
  *                 $ref: "#/components/schemas/UnexpectedError"
  */
-router.get("/email/:email", userController.getUserByEmail);
+router.get("/email/:email", authMiddleware, userController.getUserByEmail);
 
 /**
  * @swagger
@@ -208,7 +208,7 @@ router.get("/email/:email", userController.getUserByEmail);
  *               schema:
  *                 $ref: "#/components/schemas/UnexpectedError"
  */
-router.get("/username/:username", userController.getUserByUserName);
+router.get("/username/:username", authMiddleware, userController.getUserByUserName);
 
 /**
  * @swagger
@@ -248,7 +248,7 @@ router.get("/username/:username", userController.getUserByUserName);
  *               schema:
  *                 $ref: "#/components/schemas/UnexpectedError"
  */
-router.put("/:id", userController.updateUser);
+router.put("/:id", authMiddleware, userController.updateUser);
 
 /**
  * @swagger
@@ -273,7 +273,7 @@ router.put("/:id", userController.updateUser);
  *         "500":
  *           description: An unexpected error occurred.
  */
-router.delete("/:id", userController.deleteUser);
+router.delete("/:id", authMiddleware, userController.deleteUser);
 
 /**
  * @swagger

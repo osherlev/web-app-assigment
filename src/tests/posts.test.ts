@@ -1,10 +1,16 @@
 import request from 'supertest';
 import initApp from '../server';
 import mongoose from 'mongoose';
-import {Express} from 'express';
+import { Express } from 'express';
 import postModel from '../models/posts_model';
 
 let app: Express;
+
+jest.mock("../utils/authMiddleware", () => ({
+    __esModule: true,
+    default: jest.fn((req, res, next) => next()),
+}));
+
 beforeAll(async () => {
     app = await initApp();
 });
@@ -37,7 +43,7 @@ describe("/post/createPost", () => {
     it("should not create a post without required title", async () => {
         const response = await request(app)
             .post("/post/createPost")
-            .send({sender: "admin", content: "test"});
+            .send({ sender: "admin", content: "test" });
 
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(
@@ -47,7 +53,7 @@ describe("/post/createPost", () => {
     it("should not create a post without required sender", async () => {
         const response = await request(app)
             .post("/post/createPost")
-            .send({title: "test", content: "test"});
+            .send({ title: "test", content: "test" });
 
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(

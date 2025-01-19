@@ -6,6 +6,6 @@ initApp().then((app) => {
     console.log(`App is running on http://localhost:${port}/`);
   });
 })
-    .catch((error) => {
-      console.error("Error init app", error);
-    });
+  .catch((error) => {
+    console.error("Error init app", error);
+  });

@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
-import express, {Express} from "express";
+import express, { Express } from "express";
 import bodyParser from "body-parser";
-import {connectDB} from "./utils/db_util";
+import { connectDB } from "./utils/db_util";
 import postsRoute from './routes/posts_routes';
 import commentsRoute from "./routes/comments_routes";
 import usersRoute from "./routes/users_routes";
@@ -25,7 +25,7 @@ const options: swaggerJsDoc.Options = {
 const specs = swaggerJsDoc(options);
 app.use("/docs", swaggerUI.serve, swaggerUI.setup(specs));
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use("/post", postsRoute);
