@@ -5,7 +5,7 @@
 # 1. Create a New Post
 POST http://localhost:3000/post/createPost
 Content-Type: application/json
-
+Authorization: Bearer
 {
   "title": "My First Post",
   "content": "This is the content of my first post.",
@@ -15,20 +15,20 @@ Content-Type: application/json
 ###
 # 2. Get All Posts
 GET http://localhost:3000/post/getAllPosts
-
+Authorization: Bearer
 ###
 # 3. Get a Post by ID
 GET http://localhost:3000/post/675857f5f0dd49af4d25bbc6
-
+Authorization: Bearer
 ###
 # 4. Get Posts by Sender
 GET http://localhost:3000/post?sender=Osher
-
+Authorization: Bearer
 ###
 # 5. Update a Post
 PUT http://localhost:3000/post/675857f5f0dd49af4d25bbc6
 Content-Type: application/json
-
+Authorization: Bearer
 {
   "title": "Updated Post Title",
   "content": "Updated content for the post.",
@@ -44,7 +44,7 @@ Content-Type: application/json
 # 1. Add a Comment to a Post 
 POST http://localhost:3000/comment/createComment 
 Content-Type: application/json
-
+Authorization: Bearer
 {
 "postId": "67585ccd2177f17c0d17b602", "content": "This is a comment on the post.", "sender": "Alik"
 }
@@ -52,20 +52,20 @@ Content-Type: application/json
 ### 
 # 2. Get a Comment by Sender 
 GET http://localhost:3000/comment/bySender?sender=Alik
-
+Authorization: Bearer
 ### 
 # 3. Get a Comment by ID 
 GET http://localhost:3000/comment/byId/67585d072177f17c0d17b604
-
+Authorization: Bearer
 ### 
 # 4. Get All Comments for a Specific Post
 GET http://localhost:3000/comment/post/67585d072177f17c0d17b604
-
+Authorization: Bearer
 ### 
 # 5. Update a Comment 
 PUT http://localhost:3000/comment/update/67585d072177f17c0d17b604 
 Content-Type: application/json
-
+Authorization: Bearer
 {
 "content": "Updated comment content.",
   "sender": "Alik"
@@ -74,7 +74,7 @@ Content-Type: application/json
 ### 
 # 6. Delete a Comment 
 DELETE http://localhost:3000/comment/delete/67585d072177f17c0d17b604
-
+Authorization: Bearer
 ###
 
 # --------------------------------- 
@@ -87,30 +87,30 @@ POST http://localhost:3000/user/registerUser
 Content-Type: application/json
 
 {
-"username": "Osher", "email": "osherlev317@gmail.com", "password": "Alik is awesome"
+"username": "Osher", "email": "osherlev317@gmail.com", "password": "Alik"
 }
 
 ### 
 # 2. Get All Users 
 GET http://localhost:3000/user
-
+Authorization: Bearer
 ### 
 # 3. Get a User by ID 
 GET http://localhost:3000/user/67587997adbef12fc7f01331
-
+Authorization: Bearer
 ### 
 # 4. Get a User by Email 
 GET http://localhost:3000/user/email/osherlev317@gmail.com
-
+Authorization: Bearer
 ### 
 # 5. Get a User by Username 
 GET http://localhost:3000/user/username/Osher
-
+Authorization: Bearer
 ### 
 # 6. Update User 
 PUT http://localhost:3000/user/67587997adbef12fc7f01331
 Content-Type: application/json
-
+Authorization: Bearer
 {
 "username": "Osher1", "email": "osherlev317@gmail.com", "password": "Alik"
 }
@@ -118,14 +118,14 @@ Content-Type: application/json
 ### 
 # 7. Delete User 
 DELETE http://localhost:3000/user/67587997adbef12fc7f01331
-
+Authorization: Bearer
 ### 
 # 8. Login User 
 POST http://localhost:3000/user/login 
 Content-Type: application/json
 
 {
-"username": "Osher1", "password": "Alik"
+"username": "Osher", "password": "Alik"
 }
 
 ### 
